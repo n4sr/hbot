@@ -31,7 +31,7 @@ func main() {
 		Token = TokenArgument
 	} else if TokenFile != "" {
 		var b []byte
-		b, err = os.ReadFile(TokenFile)
+		b, err := os.ReadFile(TokenFile)
 		if err != nil {
 			fmt.Println(err)
 			return
