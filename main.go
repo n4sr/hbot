@@ -51,7 +51,6 @@ func main() {
 	// Register the messageCreate func as a callback for MessageCreate events.
 	dg.AddHandler(messageCreate)
 	dg.AddHandler(messageUpdate)
-	dg.AddHandler(messageReactionAdd) // Not working??
 
 	// In this example, we only care about receiving message events.
 	dg.Identify.Intents = discordgo.IntentsGuildMessages
@@ -75,38 +74,15 @@ func main() {
 }
 
 func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
-	channel, _ := s.Channel(m.ChannelID)
-
-	switch {
-	case m.Author.ID == s.State.User.ID:
-		return
-	case channel.Name != "h":
-		return
-	case m.Content != "h":
+	if isViolatingMessage(s, m.Message) {
 		s.ChannelMessageDelete(m.ChannelID, m.ID)
-	case len(m.Attachments) > 0:
-		s.ChannelMessageDelete(m.ChannelID, m.ID)
-	case len(m.Mentions) > 0:
-		s.ChannelMessageDelete(m.ChannelID, m.ID)
-	case m.Type != 0:
-		s.ChannelMessageDelete(m.ChannelID, m.ID)
-	default:
-		return
 	}
 }
 
 func messageUpdate(s *discordgo.Session, m *discordgo.MessageUpdate) {
-	if m.Author.ID == s.State.User.ID {
-		return
+	if isViolatingMessage(s, m.Message) {
+		s.ChannelMessageDelete(m.ChannelID, m.ID)
 	}
-	s.ChannelMessageDelete(m.ChannelID, m.ID)
-	printDiscordMessage(m.Message)
-}
-
-// TODO: FIX
-func messageReactionAdd(s *discordgo.Session, e *discordgo.MessageReactionAdd) {
-	fmt.Printf("%s used an emoji, deleting it..\n", e.Member.User.Username)
-	s.MessageReactionRemove(e.ChannelID, e.MessageID, e.Emoji.ID, e.UserID)
 }
 
 func printDiscordMessage(m *discordgo.Message) {
@@ -115,4 +91,26 @@ func printDiscordMessage(m *discordgo.Message) {
 		fmt.Println(err)
 	}
 	fmt.Println(string(res))
+}
+
+func isViolatingMessage(s *discordgo.Session, m *discordgo.Message) bool {
+	channel, _ := s.Channel(m.ChannelID)
+	switch {
+	case channel.Name != "h":
+		return false
+	case m.Author.ID == s.State.User.ID:
+		return false
+	case m.Member.Nick != "h":
+		return true
+	case m.Content != "h":
+		return true
+	case len(m.Attachments) > 0:
+		return true
+	case len(m.Mentions) > 0:
+		return true
+	case m.Type != 0:
+		return true
+	default:
+		return false
+	}
 }
