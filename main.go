@@ -75,14 +75,24 @@ func main() {
 }
 
 func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
-	if m.Author.ID == s.State.User.ID {
+	channel, _ := s.Channel(m.ChannelID)
+
+	switch {
+	case m.Author.ID == s.State.User.ID:
+		return
+	case channel.Name != "h":
+		return
+	case m.Content != "h":
+		s.ChannelMessageDelete(m.ChannelID, m.ID)
+	case len(m.Attachments) > 0:
+		s.ChannelMessageDelete(m.ChannelID, m.ID)
+	case len(m.Mentions) > 0:
+		s.ChannelMessageDelete(m.ChannelID, m.ID)
+	case m.Type != 0:
+		s.ChannelMessageDelete(m.ChannelID, m.ID)
+	default:
 		return
 	}
-	if m.Content != "h" || len(m.Attachments) > 0 || len(m.Mentions) > 0 || m.Type != 0 {
-		s.ChannelMessageDelete(m.ChannelID, m.ID)
-		printDiscordMessage(m.Message)
-	}
-
 }
 
 func messageUpdate(s *discordgo.Session, m *discordgo.MessageUpdate) {
