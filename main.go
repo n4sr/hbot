@@ -27,9 +27,10 @@ func init() {
 
 func main() {
 	// Create a new Discord session using the provided bot token.
-	if TokenArgument != "" {
+	switch {
+	case TokenArgument != "":
 		Token = TokenArgument
-	} else if TokenFile != "" {
+	case TokenFile != "":
 		var b []byte
 		b, err := os.ReadFile(TokenFile)
 		if err != nil {
@@ -37,7 +38,7 @@ func main() {
 			return
 		}
 		Token = string(b)
-	} else {
+	default:
 		flag.Usage()
 		return
 	}
