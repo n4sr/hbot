@@ -16,11 +16,10 @@ var (
 	TokenArgument string
 	TokenFile     string
 	Token         string
-	err           error
 )
 
 func init() {
-	flag.StringVar(&Token, "t", "", "Bot Token")
+	flag.StringVar(&TokenArgument, "t", "", "Bot Token")
 	flag.StringVar(&TokenFile, "f", "", "Bot Token File")
 	flag.Parse()
 }
