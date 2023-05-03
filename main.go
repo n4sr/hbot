@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	//"flag"
 	"fmt"
 	"os"
 	"os/signal"
@@ -11,21 +10,8 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-// Variables used for command line parameters
-/*
-var (
-	Token string
-)
-
-func init() {
-	flag.Parse()
-	Token = flag.Arg(1)
-}
-*/
-
 func main() {
 	// Create a new Discord session using the provided bot token.
-
 	Token := os.Args[len(os.Args)-1]
 	if len(Token) != 70 {
 		fmt.Print("invalid authkey")
